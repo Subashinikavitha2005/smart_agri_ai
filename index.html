@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SmartAgri - AI-Based Smart Agriculture Assistant for Tamil Nadu farmers. Crop Recommendation, Disease Detection, Weather, Irrigation, Market Prices and Farmer Chatbot in Tamil and English">
+    <title>SmartAgri - AI விவசாய உதவியாளன்</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/animations.css">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#1a6b1a">
+</head>
+<body>
+
+<!-- ─── SIDEBAR NAV ─── -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <span class="logo-icon">🌾</span>
+            <div class="logo-text">
+                <span class="logo-en">SmartAgri</span>
+                <span class="logo-ta">AI விவசாய உதவி</span>
+            </div>
+        </div>
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+
+    <nav class="nav-menu">
+        <a href="#" class="nav-item active" data-module="dashboard" id="nav-dashboard">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Dashboard</span>
+            <span class="nav-label-ta">முகப்பு</span>
+        </a>
+        <a href="#" class="nav-item" data-module="crop" id="nav-crop">
+            <span class="nav-icon">🌱</span>
+            <span class="nav-label">Crop Recommend</span>
+            <span class="nav-label-ta">பயிர் பரிந்துரை</span>
+        </a>
+        <a href="#" class="nav-item" data-module="disease" id="nav-disease">
+            <span class="nav-icon">🔬</span>
+            <span class="nav-label">Disease & Pests</span>
+            <span class="nav-label-ta">நோய் மற்றும் பூச்சி</span>
+        </a>
+        <a href="#" class="nav-item" data-module="weather" id="nav-weather">
+            <span class="nav-icon">🌤️</span>
+            <span class="nav-label">Weather</span>
+            <span class="nav-label-ta">வானிலை</span>
+        </a>
+        <a href="#" class="nav-item" data-module="irrigation" id="nav-irrigation">
+            <span class="nav-icon">💧</span>
+            <span class="nav-label">Irrigation</span>
+            <span class="nav-label-ta">நீர்ப்பாசனம்</span>
+        </a>
+        <a href="#" class="nav-item" data-module="market" id="nav-market">
+            <span class="nav-icon">📈</span>
+            <span class="nav-label">Market Prices</span>
+            <span class="nav-label-ta">சந்தை விலை</span>
+        </a>
+        <a href="#" class="nav-item" data-module="chatbot" id="nav-chatbot">
+            <span class="nav-icon">🤖</span>
+            <span class="nav-label">AI Chatbot</span>
+            <span class="nav-label-ta">AI அரட்டை</span>
+        </a>
+        <a href="#" class="nav-item" data-module="schemes" id="nav-schemes">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">Govt Schemes</span>
+            <span class="nav-label-ta">அரசு திட்டங்கள்</span>
+        </a>
+        <a href="#" class="nav-item" data-module="fertilizer" id="nav-fertilizer">
+            <span class="nav-icon">🧪</span>
+            <span class="nav-label">Soil & Fertilizer</span>
+            <span class="nav-label-ta">மண் மற்றும் உரம்</span>
+        </a>
+        <a href="#" class="nav-item" data-module="calendar" id="nav-calendar">
+            <span class="nav-icon">📅</span>
+            <span class="nav-label">Crop Calendar</span>
+            <span class="nav-label-ta">பயிர் நாட்காட்டி</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="lang-toggle">
+            <button class="lang-btn active" id="langEn" onclick="setLanguage('en')">EN</button>
+            <button class="lang-btn" id="langTa" onclick="setLanguage('ta')">த</button>
+        </div>
+        <div class="sidebar-helpline">
+            <span>🚨</span>
+            <span>Kisan Helpline: <strong>1800-180-1551</strong></span>
+        </div>
+    </div>
+</aside>
+
+<!-- ─── MAIN CONTENT ─── -->
+<main class="main-content" id="mainContent">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+        <div class="topbar-title" id="topbarTitle">Dashboard / முகப்பு</div>
+        <div class="topbar-actions">
+            <!-- Smart Alerts Bell -->
+            <div class="alerts-dropdown-container" style="position: relative; margin-right: 15px;">
+                <button id="alertsBtn" class="btn-outline" style="border:none; background:transparent; font-size:1.4rem; padding:5px; cursor:pointer; position:relative;">
+                    🔔
+                    <span id="alertsBadge" style="position:absolute; top:2px; right:2px; background:var(--red-500); color:white; font-size:0.6rem; font-weight:bold; border-radius:50%; width:16px; height:16px; display:flex; align-items:center; justify-content:center; display:none;">0</span>
+                </button>
+                <div id="alertsDropdown" style="display:none; position:absolute; top:110%; right:0; width:300px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:0 10px 25px rgba(0,0,0,0.2); z-index:100; padding:15px;">
+                    <div style="font-weight:700; margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.95rem;">Smart Alerts / எச்சரிக்கைகள்</div>
+                    <div id="alertsList" style="display:flex; flex-direction:column; gap:10px;">
+                        <span style="font-size:0.85rem; color:var(--text-muted)">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="weather-pill" id="weatherPill">
+                <span class="weather-pill-icon">🌤️</span>
+                <span id="weatherPillTemp">--°C</span>
+                <span id="weatherPillCity">Chennai</span>
+            </div>
+            <a href="{{ url_for('logout') }}" class="btn-outline" style="padding: 6px 12px; margin-left: 10px; border-color: #ef4444; color: #ef4444; text-decoration: none;">Logout / வெளியேறு</a>
+        </div>
+    </header>
+
+    <!-- ═══════════════ DASHBOARD ═══════════════ -->
+    <section class="module-view active" id="module-dashboard">
+        <div class="hero-banner">
+            <div class="hero-content">
+                <div class="hero-badge">🌾 AI-Powered</div>
+                <h1 class="hero-title">வணக்கம், {{ user_name }}!</h1>
+                <p class="hero-subtitle">SmartAgri — உங்கள் AI விவசாய நண்பன்</p>
+                <p class="hero-desc">Get crop recommendations, detect diseases, check weather, manage irrigation, track market prices — all in one place, in Tamil & English.</p>
+            </div>
+            <div class="hero-graphic">
+                <div class="hero-orb"></div>
+                <div class="stat-cards-hero">
+                    <div class="stat-card-mini"><span>🌿</span><span>8 Crops</span></div>
+                    <div class="stat-card-mini"><span>🔬</span><span>AI Detection</span></div>
+                    <div class="stat-card-mini"><span>📡</span><span>Live Weather</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dash-card" onclick="showModule('crop')" tabindex="0" role="button">
+                <div class="dash-card-icon crop">🌱</div>
+                <div class="dash-card-body">
+                    <h3>Crop Recommendation</h3>
+                    <p class="ta-text">பயிர் பரிந்துரை</p>
+                    <p>Enter soil type, season & climate data to get the best crop suggestions.</p>
+                </div>
+                <div class="dash-card-arrow">→</div>
+            </div>
+            <div class="dash-card" onclick="showModule('disease')" tabindex="0" role="button">
+                <div class="dash-card-icon disease">🔬</div>
+                <div class="dash-card-body">
+                    <h3>Disease Detection</h3>
+                    <p class="ta-text">நோய் கண்டறிதல்</p>
+                    <p>Upload a leaf photo to instantly detect plant diseases with AI.</p>
+                </div>
+                <div class="dash-card-arrow">→</div>
+            <div class="dash-card" onclick="showModule('weather')" tabindex="0" role="button">
+                <div class="dash-card-icon weather">🌤️</div>
+                <div class="dash-card-body">
+                    <h3>Weather Forecast</h3>
+                    <p class="ta-text">வானிலை முன்னறிவிப்பு</p>
+                    <p>5-day forecast with rain prediction and farming advice.</p>
+                </div>
+                <div class="dash-card-arrow">→</div>
+            </div>
+            <div class="dash-card" onclick="showModule('irrigation')" tabindex="0" role="button">
+                <div class="dash-card-icon irrigation">💧</div>
+                <div class="dash-card-body">
+                    <h3>Smart Irrigation</h3>
+                    <p class="ta-text">நீர்ப்பாசன ஆலோசனை</p>
+                    <p>Calculate optimal watering schedule based on soil moisture & weather.</p>
+                </div>
+                <div class="dash-card-arrow">→</div>
+            </div>
+            <div class="dash-card" onclick="showModule('market')" tabindex="0" role="button">
+                <div class="dash-card-icon market">📈</div>
+                <div class="dash-card-body">
+                    <h3>Market Prices</h3>
+                    <p class="ta-text">சந்தை விலை</p>
+                    <p>Track live crop prices across multiple markets and mandis.</p>
+                </div>
+                <div class="dash-card-arrow">→</div>
+            </div>
+            <div class="dash-card" onclick="showModule('chatbot')" tabindex="0" role="button">
+                <div class="dash-card-icon chatbot">🤖</div>
+                <div class="dash-card-body">
+                    <h3>AI Chatbot</h3>
+                    <p class="ta-text">AI அரட்டை</p>
+                    <p>Ask agriculture questions in Tamil or English with voice input.</p>
+                </div>
+                <div class="dash-card-arrow">→</div>
+            </div>
+            <div class="dash-card" onclick="showModule('schemes')" tabindex="0" role="button">
+                <div class="dash-card-icon schemes">📋</div>
+                <div class="dash-card-body">
+                    <h3>Govt Schemes</h3>
+                    <p class="ta-text">அரசு திட்டங்கள்</p>
+                    <p>PM-KISAN, crop insurance, Kisan Credit Card and more.</p>
+                </div>
+                <div class="dash-card-arrow">→</div>
+            </div>
+        </div>
+
+        <div id="dailyTipsWidget" style="margin-top: 30px; background: rgba(59, 130, 246, 0.08); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 25px; display: flex; align-items: flex-start; gap: 15px;">
+            <div style="font-size:2.2rem;">💡</div>
+            <div>
+                <h3 style="font-size: 0.9rem; font-weight: 700; color: var(--blue-400); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Daily Farming Tip / விவசாய குறிப்பு</h3>
+                <p id="tipTextEn" style="font-size: 1.1rem; color: var(--text-primary); font-weight: 500; margin-bottom: 5px;">Loading tip...</p>
+                <p id="tipTextTa" style="font-size: 0.95rem; color: var(--text-secondary); font-family: var(--font-tamil);">குறிப்பு ஏற்றப்படுகிறது...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ CROP RECOMMENDATION ═══════════════ -->
+    <section class="module-view" id="module-crop">
+        <div class="module-header">
+            <h2>🌱 Crop Recommendation / பயிர் பரிந்துரை</h2>
+            <p>Enter your farm conditions to get AI-powered crop suggestions</p>
+        </div>
+        <div class="form-card">
+            <form id="cropForm" class="agri-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="soilType">Soil Type / மண் வகை</label>
+                        <select id="soilType" name="soilType" required>
+                            <option value="">Select soil type...</option>
+                            <option value="alluvial">Alluvial / வண்டல் மண்</option>
+                            <option value="black">Black / கருப்பு மண்</option>
+                            <option value="red">Red / சிவப்பு மண்</option>
+                            <option value="loamy">Loamy / வண்டல் கலந்த மண்</option>
+                            <option value="sandy loam">Sandy Loam / மணல் கலந்த மண்</option>
+                            <option value="clay">Clay / களிமண்</option>
+                            <option value="clay loam">Clay Loam / களி வண்டல் மண்</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="season">Season / பருவகாலம்</label>
+                        <select id="season" name="season" required>
+                            <option value="">Select season...</option>
+                            <option value="kharif">Kharif (Jun-Oct) / காரிஃப்</option>
+                            <option value="rabi">Rabi (Nov-Mar) / ரபி</option>
+                            <option value="summer">Summer (Apr-Jun) / கோடை</option>
+                            <option value="annual">Annual / வருடாந்திரம்</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tempInput">Temperature / வெப்பநிலை (°C)</label>
+                        <div class="input-with-icon">
+                            <input type="range" id="tempSlider" min="5" max="45" value="28" oninput="document.getElementById('tempInput').value=this.value">
+                            <input type="number" id="tempInput" min="5" max="45" value="28" oninput="document.getElementById('tempSlider').value=this.value" placeholder="28">
+                            <span class="unit">°C</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="rainfallInput">Rainfall / மழைப்பொழிவு (mm)</label>
+                        <div class="input-with-icon">
+                            <input type="range" id="rainfallSlider" min="0" max="400" value="100" oninput="document.getElementById('rainfallInput').value=this.value">
+                            <input type="number" id="rainfallInput" min="0" max="400" value="100" oninput="document.getElementById('rainfallSlider').value=this.value" placeholder="100">
+                            <span class="unit">mm</span>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" id="cropSubmitBtn">
+                    <span class="btn-icon">🌱</span> Get Recommendations / பரிந்துரை பெறவும்
+                </button>
+            </form>
+        </div>
+        <div id="cropResults" class="results-container hidden"></div>
+    </section>
+
+    <!-- ═══════════════ DISEASE DETECTION ═══════════════ -->
+    <section class="module-view" id="module-disease">
+        <div class="module-header">
+            <h2>🔬 Plant Disease Detection / தாவர நோய் கண்டறிதல்</h2>
+            <p>Upload a clear photo of the affected plant leaf for AI diagnosis</p>
+        </div>
+        <div class="upload-zone" id="uploadZone">
+            <input type="file" id="diseaseImageInput" accept="image/*" hidden>
+            <div class="upload-content" id="uploadContent">
+                <div class="upload-icon">📷</div>
+                <p class="upload-primary">Click or drag to upload leaf photo</p>
+                <p class="upload-secondary">இலையின் படத்தை பதிவேற்றவும் (JPG, PNG up to 5MB)</p>
+                <button class="btn-outline" onclick="document.getElementById('diseaseImageInput').click()">
+                    Choose Photo / படம் தேர்ந்தெடு
+                </button>
+                <button class="btn-outline camera-btn" onclick="openCamera()">
+                    📸 Use Camera / கேமரா பயன்படுத்து
+                </button>
+            </div>
+            <div class="upload-preview hidden" id="uploadPreview">
+                <img id="previewImg" src="" alt="Uploaded leaf">
+                <button class="btn-danger-sm" onclick="clearUpload()">✕ Change Image</button>
+            </div>
+        </div>
+        <div class="detect-actions">
+            <button class="btn-primary" id="detectBtn" onclick="runDiseaseDetection()" disabled>
+                <span class="btn-icon">🔬</span> Analyze Disease / நோய் பகுப்பாய்வு
+            </button>
+        </div>
+        <div id="diseaseResults" class="results-container hidden"></div>
+        <div class="disease-demo-note">
+            <span>ℹ️</span> <strong>Demo Mode:</strong> Using AI simulation. Connect a trained TensorFlow model for production use.
+        </div>
+    </section>
+
+    <!-- ═══════════════ WEATHER ═══════════════ -->
+    <section class="module-view" id="module-weather">
+        <div class="module-header">
+            <h2>🌤️ Weather Forecast / வானிலை முன்னறிவிப்பு</h2>
+            <p>5-day weather forecast with farming-specific insights</p>
+        </div>
+        <div class="city-search-bar">
+            <input type="text" id="cityInput" placeholder="Enter city / நகரம் உள்ளிடுங்கள்" value="Chennai">
+            <button class="btn-primary" onclick="loadWeather()">
+                🔍 Search / தேடு
+            </button>
+            <button class="btn-outline" onclick="useMyLocation()">📍 My Location</button>
+        </div>
+        <div id="weatherDisplay" class="weather-display">
+            <div class="loading-spinner" id="weatherLoading">
+                <div class="spinner"></div><p>Fetching weather... / வானிலை பெறுகிறது...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ IRRIGATION ═══════════════ -->
+    <section class="module-view" id="module-irrigation">
+        <div class="module-header">
+            <h2>💧 Smart Irrigation Advice / நீர்ப்பாசன ஆலோசனை</h2>
+            <p>Get precise water recommendations for your crop</p>
+        </div>
+        <div class="form-card">
+            <form id="irrigationForm" class="agri-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="irrigCrop">Crop / பயிர்</label>
+                        <select id="irrigCrop" required>
+                            <option value="rice">Rice / நெல்</option>
+                            <option value="wheat">Wheat / கோதுமை</option>
+                            <option value="maize">Maize / சோளம்</option>
+                            <option value="cotton">Cotton / பருத்தி</option>
+                            <option value="sugarcane">Sugarcane / கரும்பு</option>
+                            <option value="tomato">Tomato / தக்காளி</option>
+                            <option value="groundnut">Groundnut / நிலக்கடலை</option>
+                            <option value="banana">Banana / வாழை</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="soilMoisture">Soil Moisture / மண் ஈரப்பதம் (%)</label>
+                        <div class="moisture-display">
+                            <input type="range" id="moistureSlider" min="0" max="100" value="50"
+                                oninput="updateMoistureDisplay(this.value)">
+                            <div class="moisture-reading" id="moistureReading">50%</div>
+                            <div class="moisture-bar">
+                                <div class="moisture-fill" id="moistureFill" style="width:50%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="irrigTemp">Current Temperature / வெப்பநிலை (°C)</label>
+                        <input type="number" id="irrigTemp" min="0" max="50" value="30" placeholder="30">
+                    </div>
+                    <div class="form-group">
+                        <label for="irrigHumidity">Humidity / ஈரப்பதம் (%)</label>
+                        <input type="number" id="irrigHumidity" min="0" max="100" value="70" placeholder="70">
+                    </div>
+                    <div class="form-group">
+                        <label for="rainfall7d">Rainfall (last 7 days) / கடந்த 7 நாள் மழை (mm)</label>
+                        <input type="number" id="rainfall7d" min="0" max="500" value="20" placeholder="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="farmArea">Farm Area / நிலப்பரப்பு (Hectares)</label>
+                        <input type="number" id="farmArea" min="0.1" max="100" step="0.1" value="1.0" placeholder="1.0">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <span class="btn-icon">💧</span> Get Irrigation Advice / நீர்ப்பாசன ஆலோசனை
+                </button>
+            </form>
+        </div>
+        <div id="irrigationResults" class="results-container hidden"></div>
+    </section>
+
+    <!-- ═══════════════ MARKET PRICES ═══════════════ -->
+    <section class="module-view" id="module-market">
+        <div class="module-header">
+            <h2>📈 Market Prices / சந்தை விலை</h2>
+            <p>Real-time crop prices across major markets</p>
+        </div>
+        <div class="market-filter-bar">
+            <button class="filter-btn active" onclick="filterMarket('all', this)">All Crops / அனைத்தும்</button>
+            <button class="filter-btn" onclick="filterMarket('rice', this)">Rice / நெல்</button>
+            <button class="filter-btn" onclick="filterMarket('wheat', this)">Wheat / கோதுமை</button>
+            <button class="filter-btn" onclick="filterMarket('cotton', this)">Cotton / பருத்தி</button>
+            <button class="filter-btn" onclick="filterMarket('tomato', this)">Tomato / தக்காளி</button>
+            <button class="filter-btn" onclick="filterMarket('maize', this)">Maize / சோளம்</button>
+        </div>
+        <div id="marketDisplay" class="market-display">
+            <div class="loading-spinner">
+                <div class="spinner"></div><p>Loading prices...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ CHATBOT ═══════════════ -->
+    <section class="module-view" id="module-chatbot">
+        <div class="module-header">
+            <h2>🤖 AI Farmer Chatbot / AI அரட்டை</h2>
+            <p>Ask any agriculture question in Tamil or English</p>
+        </div>
+        <div class="chatbot-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-msg bot">
+                    <div class="chat-avatar">🌾</div>
+                    <div class="chat-bubble">
+                        வணக்கம்! நான் உங்கள் AI விவசாய உதவியாளன். பயிர் பரிந்துரை, நோய் சிகிச்சை, வானிலை, சந்தை விலைகள் பற்றி கேளுங்கள்! 🌱<br><br>
+                        Hello! I'm your Smart Agriculture AI. Ask me about crops, diseases, weather, irrigation, or market prices!
+                    </div>
+                </div>
+            </div>
+            <div class="chat-quick-topics" id="chatQuickTopics">
+                <!-- Populated by JS -->
+            </div>
+            <div class="chat-input-area">
+                <div class="chat-input-row">
+                    <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Voice Input / குரல் உள்ளீடு">🎤</button>
+                    <input type="text" id="chatInput" class="chat-input"
+                        placeholder="Type your question / உங்கள் கேள்வியை தட்டச்சு செய்யுங்கள்..."
+                        onkeydown="if(event.key==='Enter') sendChatMessage()">
+                    <button class="btn-primary send-btn" onclick="sendChatMessage()">
+                        ➤
+                    </button>
+                </div>
+                <div class="voice-indicator hidden" id="voiceIndicator">
+                    <div class="voice-wave"><span></span><span></span><span></span><span></span><span></span></div>
+                    <span>Listening... / கேட்கிறேன்...</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ GOVT SCHEMES ═══════════════ -->
+    <section class="module-view" id="module-schemes">
+        <div class="module-header">
+            <h2>📋 Government Schemes / அரசு திட்டங்கள்</h2>
+            <p>Agricultural support schemes and how to apply</p>
+        </div>
+        <div id="schemesDisplay" class="schemes-display">
+            <div class="loading-spinner">
+                <div class="spinner"></div><p>Loading schemes...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ FERTILIZER CALCULATOR ═══════════════ -->
+    <section class="module-view" id="module-fertilizer">
+        <div class="module-header">
+            <h2>🧪 Fertilizer Calculator / உர கணக்கீடு</h2>
+            <p>Get exact fertilizer quantities (Urea, DAP, MOP) based on your crop and area</p>
+        </div>
+        <div class="form-card">
+            <form id="fertilizerForm" class="agri-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="fertCrop">Crop / பயிர்</label>
+                        <select id="fertCrop" required>
+                            <option value="rice">Rice / நெல்</option>
+                            <option value="wheat">Wheat / கோதுமை</option>
+                            <option value="maize">Maize / சோளம்</option>
+                            <option value="cotton">Cotton / பருத்தி</option>
+                            <option value="sugarcane">Sugarcane / கரும்பு</option>
+                            <option value="tomato">Tomato / தக்காளி</option>
+                            <option value="groundnut">Groundnut / நிலக்கடலை</option>
+                            <option value="banana">Banana / வாழை</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fertArea">Farm Area / நிலப்பரப்பு (Hectares)</label>
+                        <input type="number" id="fertArea" min="0.1" max="100" step="0.1" value="1.0" placeholder="1.0">
+                    </div>
+                    <div class="form-group">
+                        <label for="fertPh">Soil pH</label>
+                        <input type="number" id="fertPh" min="4" max="9" step="0.1" value="6.5" placeholder="6.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="fertOM">Organic Matter / கரிம பொருள்</label>
+                        <select id="fertOM">
+                            <option value="low">Low (&lt;1%) / குறைவு</option>
+                            <option value="medium" selected>Medium (1-2%) / நடுத்தரம்</option>
+                            <option value="high">High (&gt;2%) / அதிகம்</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <span class="btn-icon">🧪</span> Calculate Fertilizer / உர அளவு கணக்கிடு
+                </button>
+            </form>
+        </div>
+        <div id="fertilizerResults" class="results-container hidden"></div>
+    </section>
+
+    <!-- ═══════════════ CROP CALENDAR ═══════════════ -->
+    <section class="module-view" id="module-calendar">
+        <div class="module-header">
+            <h2>📅 Crop Calendar / பயிர் நாட்காட்டி</h2>
+            <p>Month-wise farming activities and seasonal crop guide</p>
+        </div>
+        <div id="calendarDisplay" class="results-container">
+            <div class="loading-spinner"><div class="spinner"></div><p>Loading calendar...</p></div>
+        </div>
+    </section>
+
+</main>
+
+<!-- ─── MOBILE OVERLAY ─── -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ─── TOAST NOTIFICATIONS ─── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/app.js"></script>
+<script src="/static/js/crop.js"></script>
+<script src="/static/js/disease.js"></script>
+<script src="/static/js/weather.js"></script>
+<script src="/static/js/irrigation.js"></script>
+<script src="/static/js/market.js"></script>
+<script src="/static/js/chatbot.js"></script>
+<script src="/static/js/schemes.js"></script>
+<script src="/static/js/fertilizer.js"></script>
+<script src="/static/js/calendar.js"></script>
+</body>
+</html>
